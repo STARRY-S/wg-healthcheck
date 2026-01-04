@@ -1,0 +1,10 @@
+[Unit]
+Description=Run WireGuard health check periodically
+
+[Timer]
+OnBootSec=30
+OnUnitActiveSec=30
+AccuracySec=10
+
+[Install]
+WantedBy=timers.target

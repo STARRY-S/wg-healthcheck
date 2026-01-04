@@ -1,0 +1,12 @@
+[Unit]
+Description=WireGuard client health check
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/wg-healthcheck
+Environment=CONFIG_FILE=/etc/wg-healthcheck/config.env
+
+[Install]
+WantedBy=network-online.target

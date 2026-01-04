@@ -1,22 +1,59 @@
-# keepalive
+# WireGuard Health Check
 
-Script to restart the WireGuard VPN client to ensure the WireGuard VPN keepalive 
-if the public IP of the client always change.
+A lightweight health-check watchdog for WireGuard clients. It checks
+connectivity for one or more `wgX` interfaces using `ping`, and automatically
+restarts the interface when the connection times out.
 
-## Usage
+This is useful when a client is behind NAT and the ISP periodically changes the
+public IP, causing the tunnel to become temporarily unreachable.
 
-```sh
-# Modify the *DESTINATION* IP and *INTERFACE* name
-vim wireguard_auto_reconnect.sh
-# Install wireguard_auto_reconnect.sh script
-cp wireguard_auto_reconnect.sh /usr/local/bin
-# Install wireguard-keepalive.service
-cp wireguard-keepalive.service /etc/systemd/system/
+## What & Why
 
-systemctl daemon-reload
-systemctl enable --now wireguard-keepalive.service
+- What does this script do?
+    Periodically pings a configured target IP via each WireGuard interface
+    (`ping -I wgX ...`).  
+    If the ping timeout, it restarts the corresponding WireGuard interface to
+    force reconnection.  
+- Wireguard already have the `PersistentKeepalive`, why not just use this?
+    In some situaions (unstable NAT, ISP public IP changes, etc.),
+    the tunnel may still become unreachable with keepalive enabled.
+- Note: This script is not a replacement for WireGuard `PersistentKeepalive`.
+- Issues and PRs are welcome if you have any suggestions.
+
+## Installation
+
+```bash
+git clone https://github.com/STARRY-S/wg-healthcheck.git && cd wg-healthcheck
+sudo ./install.sh
+
+# Edit configuration
+sudo cp /etc/wg-healthcheck/config.example.env /etc/wg-healthcheck/config.env
+sudo vim /etc/wg-healthcheck/config.env
+
+# Enable periodic checks via systemd timer
+sudo systemctl enable --now wg-healthcheck.timer
 ```
 
 ## License
 
-MIT
+MIT License
+
+Copyright (c) 2026 STARRY-S
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

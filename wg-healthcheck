@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: MIT
+#
+# Copyright (C) 2026 Starry Wang <hxstarrys@gmail.com>. All Rights Reserved.
+
+set -euo pipefail
+
+CONFIG_FILE=${CONFIG_FILE:-'/etc/wg-healthcheck/config.env'}
+
+source $CONFIG_FILE
+
+log() { printf '[INFO][%s] %s\n' "$(date '+%F %T')" "$*"; }
+err() { printf '[ERRO][%s] %s\n' "$(date '+%F %T')" "$*" >&2; }
+
+restart_wg() {
+    local ifname="$1"
+    case "$RESTART_MODE" in
+    systemd)
+        systemctl restart "wg-quick@${ifname}.service"
+    ;;
+    wg-quick)
+        wg-quick down "$ifname" || true
+        wg-quick up "$ifname"
+    ;;
+    *)
+        err "ERROR: Unknown RESTART_MODE=$RESTART_MODE (use systemd|wg-quick)"
+        return 1
+    ;;
+    esac
+}
+
+ping_check() {
+    local ifname="$1"
+    local target="$2"
+    if ping -I "$ifname" -c "$PING_COUNT" -W "$PING_TIMEOUT" -i "$PING_INTERVAL" $PING_EXTRA_OPTS "$target" >/dev/null; then
+        log "$ifname: ping $target OK"
+        return
+    fi
+    err "$ifname: ping $target FAIL -> restarting interface... (mode [$RESTART_MODE])"
+    restart_wg "$ifname"
+}
+
+main() {
+    local ifname target
+    for ifname in "${!PING_TARGETS[@]}"; do
+        target="${PING_TARGETS[$ifname]}"
+        if [[ -z "${target:-}" ]]; then
+            err "$ifname: empty target, skip."
+            continue
+        fi
+        ping_check "$ifname" "$target"
+    done
+}
+
+main "$@"
