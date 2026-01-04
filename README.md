@@ -22,11 +22,26 @@ public IP, causing the tunnel to become temporarily unreachable.
 
 ## Installation
 
+For Arch Linux, you can install from [AUR](https://aur.archlinux.org/packages/wg-healthcheck).
+
+```bash
+paru -S wg-healthcheck
+```
+
+---
+
+Install from source code.
+
 ```bash
 git clone https://github.com/STARRY-S/wg-healthcheck.git && cd wg-healthcheck
 sudo ./install.sh
+sudo systemctl daemon-reload
+```
 
-# Edit configuration
+## Usage
+
+```bash
+# Modify configuration.
 sudo cp /etc/wg-healthcheck/config.example.env /etc/wg-healthcheck/config.env
 sudo vim /etc/wg-healthcheck/config.env
 
