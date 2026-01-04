@@ -1,7 +1,7 @@
 # WireGuard Health Check
 
-A lightweight health-check watchdog for WireGuard clients. It checks
-connectivity for one or more `wgX` interfaces using `ping`, and automatically
+Lightweight health-check script for WireGuard clients. It checks
+connectivity for one or more `wgN` interfaces using `ping`, and automatically
 restarts the interface when the connection times out.
 
 This is useful when a client is behind NAT and the ISP periodically changes the
@@ -9,16 +9,16 @@ public IP, causing the tunnel to become temporarily unreachable.
 
 ## What & Why
 
-- What does this script do?
+- What does this script do?  
     Periodically pings a configured target IP via each WireGuard interface
-    (`ping -I wgX ...`).  
+    (`ping -I wgN ...`).  
     If the ping timeout, it restarts the corresponding WireGuard interface to
     force reconnection.  
-- Wireguard already have the `PersistentKeepalive`, why not just use this?
+- Wireguard already have the `PersistentKeepalive`, why not just use this?  
     In some situaions (unstable NAT, ISP public IP changes, etc.),
-    the tunnel may still become unreachable with keepalive enabled.
-- Note: This script is not a replacement for WireGuard `PersistentKeepalive`.
-- Issues and PRs are welcome if you have any suggestions.
+    the tunnel may still become unreachable with keepalive enabled.  
+- Note: This script is not a replacement for WireGuard `PersistentKeepalive`.  
+- Issues and PRs are welcome if you have any suggestions.  
 
 ## Installation
 
