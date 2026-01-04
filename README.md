@@ -14,15 +14,15 @@ public IP, causing the tunnel to become temporarily unreachable.
     (`ping -I wgN ...`).  
     If the ping timeout, it restarts the corresponding WireGuard interface to
     force reconnection.  
-- Wireguard already have the `PersistentKeepalive`, why not just use this?  
-    In some situaions (unstable NAT, ISP public IP changes, etc.),
+- Wireguard already has the `PersistentKeepalive`, why not just use this?  
+    In some situations (unstable NAT, ISP public IP changes, etc.),
     the tunnel may still become unreachable with keepalive enabled.  
-- Note: This script is not a replacement for WireGuard `PersistentKeepalive`.  
+- Note: This is not a replacement for WireGuard's `PersistentKeepalive`.  
 - Issues and PRs are welcome if you have any suggestions.  
 
 ## Installation
 
-For Arch Linux, you can install from [AUR](https://aur.archlinux.org/packages/wg-healthcheck).
+For Arch Linux users, install from [AUR](https://aur.archlinux.org/packages/wg-healthcheck).
 
 ```bash
 paru -S wg-healthcheck
@@ -41,7 +41,7 @@ sudo systemctl daemon-reload
 ## Usage
 
 ```bash
-# Modify configuration.
+# Modify configuration
 sudo cp /etc/wg-healthcheck/config.example.env /etc/wg-healthcheck/config.env
 sudo vim /etc/wg-healthcheck/config.env
 
